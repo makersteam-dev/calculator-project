@@ -3,83 +3,117 @@ window.Webflow.push(() => {
   window.Webflow ||= [];
   window.Webflow.push(() => {
     // save all the inputs as variables
-    const marketingBudget: HTMLInputElement = document.querySelector(
+    const marketingBudget: HTMLInputElement | null = document.querySelector<HTMLInputElement>(
       'input#Total-Marketing-Budget'
-    )!;
-    console.log(marketingBudget);
-    const marketingTeamSize: HTMLInputElement = document.querySelector(
+    );
+
+    const marketingTeamSize: HTMLInputElement | null = document.querySelector<HTMLInputElement>(
       'input#Marketing-Team-Size'
-    )!;
+    );
 
     // Save all the inputs as variables
-    const paidSearchInput: HTMLInputElement = document.querySelector('input#paid-search')!;
-    const paidSocialInput: HTMLInputElement = document.querySelector('input#paid-social')!;
-    const affiliatesInput: HTMLInputElement = document.querySelector('input#affiliates')!;
-    const organicInput: HTMLInputElement = document.querySelector('input#organic')!;
-    const otherInput: HTMLInputElement = document.querySelector('input#other')!;
+    const paidSearchInput: HTMLInputElement | null =
+      document.querySelector<HTMLInputElement>('input#paid-search');
+
+    const paidSocialInput: HTMLInputElement | null =
+      document.querySelector<HTMLInputElement>('input#paid-social');
+    const affiliatesInput: HTMLInputElement | null =
+      document.querySelector<HTMLInputElement>('input#affiliates');
+    const organicInput: HTMLInputElement | null =
+      document.querySelector<HTMLInputElement>('input#organic');
+    const otherInput: HTMLInputElement | null =
+      document.querySelector<HTMLInputElement>('input#other');
 
     // Keep track of last checked input
     let lastCheckedInput: HTMLInputElement | null = null;
 
     // Add event listener to update otherInput value, check validity, and restrict input values
     [paidSearchInput, paidSocialInput, affiliatesInput, organicInput].forEach((input) => {
-      input.addEventListener('input', () => {
-        let paidSearch: number = parseFloat(paidSearchInput.value) || 0;
-        let paidSocial: number = parseFloat(paidSocialInput.value) || 0;
-        let affiliates: number = parseFloat(affiliatesInput.value) || 0;
-        let organic: number = parseFloat(organicInput.value) || 0;
+      if (input !== null) {
+        input.addEventListener('input', () => {
+          let paidSearch: number =
+            paidSearchInput !== null ? parseFloat(paidSearchInput.value) || 0 : 0;
+          let paidSocial: number =
+            paidSocialInput !== null ? parseFloat(paidSocialInput.value) || 0 : 0;
+          let affiliates: number =
+            affiliatesInput !== null ? parseFloat(affiliatesInput.value) || 0 : 0;
+          let organic: number = organicInput !== null ? parseFloat(organicInput.value) || 0 : 0;
 
-        // Restrict input values to be within 0 and 100
-        paidSearch = Math.min(Math.max(paidSearch, 0), 100);
-        paidSocial = Math.min(Math.max(paidSocial, 0), 100);
-        affiliates = Math.min(Math.max(affiliates, 0), 100);
-        organic = Math.min(Math.max(organic, 0), 100);
+          // Restrict input values to be within 0 and 100
+          paidSearch = Math.min(Math.max(paidSearch, 0), 100);
+          paidSocial = Math.min(Math.max(paidSocial, 0), 100);
+          affiliates = Math.min(Math.max(affiliates, 0), 100);
+          organic = Math.min(Math.max(organic, 0), 100);
 
-        const totalValue: number = paidSearch + paidSocial + affiliates + organic;
+          const totalValue: number = paidSearch + paidSocial + affiliates + organic;
 
-        if (totalValue > 100) {
-          // Reset last checked input value to 0
-          if (lastCheckedInput) {
-            lastCheckedInput.value = '0';
-            lastCheckedInput = null;
+          if (totalValue > 100) {
+            // Reset last checked input value to 0
+            if (lastCheckedInput) {
+              lastCheckedInput.value = '0';
+              lastCheckedInput = null;
+            }
+            // Recalculate total value and remaining value
+            paidSearch = paidSearchInput !== null ? parseFloat(paidSearchInput.value) || 0 : 0;
+            paidSocial = paidSocialInput !== null ? parseFloat(paidSocialInput.value) || 0 : 0;
+            affiliates = affiliatesInput !== null ? parseFloat(affiliatesInput.value) || 0 : 0;
+            organic = organicInput !== null ? parseFloat(organicInput.value) || 0 : 0;
+
+            const remainingValue: number = 100 - (paidSearch + paidSocial + affiliates + organic);
+            if (otherInput !== null) {
+              otherInput.value = remainingValue.toString();
+            }
+          } else {
+            const remainingValue: number = 100 - totalValue;
+            if (otherInput !== null) {
+              otherInput.value = remainingValue.toString();
+            }
+            lastCheckedInput = input;
           }
-          // Recalculate total value and remaining value
-          paidSearch = parseFloat(paidSearchInput.value) || 0;
-          paidSocial = parseFloat(paidSocialInput.value) || 0;
-          affiliates = parseFloat(affiliatesInput.value) || 0;
-          organic = parseFloat(organicInput.value) || 0;
-          const remainingValue: number = 100 - (paidSearch + paidSocial + affiliates + organic);
-          otherInput.value = remainingValue.toString();
-        } else {
-          const remainingValue: number = 100 - totalValue;
-          otherInput.value = remainingValue.toString();
-          lastCheckedInput = input;
-        }
 
-        // Update input values after restriction
-        paidSearchInput.value = paidSearch.toString();
-        paidSocialInput.value = paidSocial.toString();
-        affiliatesInput.value = affiliates.toString();
-        organicInput.value = organic.toString();
+          // Update input values after restriction
+          if (paidSearchInput !== null) {
+            paidSearchInput.value = paidSearch.toString();
+          }
+          if (paidSocialInput !== null) {
+            paidSocialInput.value = paidSocial.toString();
+          }
+          if (affiliatesInput !== null) {
+            affiliatesInput.value = affiliates.toString();
+          }
+          if (organicInput !== null) {
+            organicInput.value = organic.toString();
+          }
 
-        // Change label color based on input value
-        const parentWrap = input.parentElement!.parentElement!;
-        const label = parentWrap.querySelector('.is--calc-label') as HTMLElement;
-        if (parseFloat(input.value) > 0) {
-          label.style.color = '#DC56F2';
-        } else {
-          label.style.color = '#FFFFFF';
-        }
-      });
+          // Change label color based on input value
+          const parentWrap = input.parentElement?.parentElement;
+          const label = parentWrap?.querySelector('.is--calc-label') as HTMLElement;
+          if (parseFloat(input.value) > 0) {
+            label.style.color = '#DC56F2';
+          } else {
+            label.style.color = '#FFFFFF';
+          }
+        });
+      }
     });
 
     // Initialize input values to 0
     window.addEventListener('load', () => {
-      paidSearchInput.value = '0';
-      paidSocialInput.value = '0';
-      affiliatesInput.value = '0';
-      organicInput.value = '0';
-      otherInput.value = '0';
+      if (paidSearchInput !== null) {
+        paidSearchInput.value = '0';
+      }
+      if (paidSocialInput !== null) {
+        paidSocialInput.value = '0';
+      }
+      if (affiliatesInput !== null) {
+        affiliatesInput.value = '0';
+      }
+      if (organicInput !== null) {
+        organicInput.value = '0';
+      }
+      if (otherInput !== null) {
+        otherInput.value = '0';
+      }
 
       // Reset label colors on load
       const labels = document.querySelectorAll('.is--calc-label');
@@ -121,52 +155,51 @@ window.Webflow.push(() => {
     // Add event listener for surveyToolsCheckbox
     surveyToolsCheckbox?.addEventListener('change', function (this: HTMLInputElement | null) {
       if (this) {
-        // Add null check
-        // @ts-ignore
-        const surveyToolsCheckboxValue: string = this.checked ? '1' : '0';
         // Rest of the code...
+        this.checked ? '1' : '0';
       }
     });
 
     // Add event listener for socialMonitoringCheckbox
     socialMonitoringCheckbox?.addEventListener('change', function (this: HTMLInputElement) {
-      // @ts-ignore
-      const socialMonitoringCheckboxValue: string = this.checked ? '1' : '0';
+      // Rest of the code...
+      this.checked ? '1' : '0';
     });
 
     // Add event listener for crossChannelAttributionCheckbox
     crossChannelAttributionCheckbox?.addEventListener('change', function (this: HTMLInputElement) {
-      // @ts-ignore
-      const crossChannelAttributionCheckboxValue: string = this.checked ? '1' : '0';
+      // Rest of the code...
+      this.checked ? '1' : '0';
     });
 
     // Add event listener for competitiveIntelligenceCheckbox
     competitiveIntelligenceCheckbox?.addEventListener('change', function (this: HTMLInputElement) {
-      // @ts-ignore
-      const competitiveIntelligenceCheckboxValue: string = this.checked ? '1' : '0';
+      // Rest of the code...
+      this.checked ? '1' : '0';
     });
 
     // Add event listener for marketingAgenciesCheckbox
     marketingAgenciesCheckbox?.addEventListener('change', function (this: HTMLInputElement) {
-      // @ts-ignore
-      const marketingAgenciesCheckboxValue: string = this.checked ? '1' : '0';
+      // Rest of the code...
+      this.checked ? '1' : '0';
     });
 
     // Add event listener for managementConsultingCheckbox
     managementConsultingCheckbox?.addEventListener('change', function (this: HTMLInputElement) {
-      // @ts-ignore
-      const managementConsultingCheckboxValue: string = this.checked ? '1' : '0';
+      // Rest of the code...
+      this.checked ? '1' : '0';
     });
 
     // Add event listener for input changes
     const inputs: NodeListOf<HTMLInputElement> = document.querySelectorAll('input');
     function calculateValues() {
-      const marketingBudgetValue = parseFloat(marketingBudget.value);
-      const marketingTeamSizeValue = parseFloat(marketingTeamSize.value);
-      const paidSearch = parseFloat(paidSearchInput.value);
-      const paidSocial = parseFloat(paidSocialInput.value);
-      const affiliates = parseFloat(affiliatesInput.value);
-      const organic = parseFloat(organicInput.value);
+      const marketingBudgetValue = marketingBudget !== null ? parseFloat(marketingBudget.value) : 0;
+      const marketingTeamSizeValue =
+        marketingTeamSize !== null ? parseFloat(marketingTeamSize.value) : 0;
+      const paidSearch = paidSearchInput !== null ? parseFloat(paidSearchInput.value) : 0;
+      const paidSocial = paidSocialInput !== null ? parseFloat(paidSocialInput.value) : 0;
+      const affiliates = affiliatesInput !== null ? parseFloat(affiliatesInput.value) : 0;
+      const organic = organicInput !== null ? parseFloat(organicInput.value) : 0;
 
       const paidSearchPercentage = paidSearch / 100;
       const paidSocialPercentage = paidSocial / 100;
