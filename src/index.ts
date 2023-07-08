@@ -88,14 +88,14 @@ window.Webflow.push(() => {
       });
     });
 
-    const paidSearchSaving: number = 0.12;
-    const paidSocialSaving: number = 0.09;
-    const organicSaving: number = 0.05;
-    const affiliatesSaving: number = 0.08;
-    const managementConsultingSaving: number = 0.025;
-    const marketingAgencySaving: number = 0.012;
-    const costOfUsMarketingEmployee: number = 142700;
-    const hoursSaved: number = 0.28;
+    const paidSearchSaving = 0.12;
+    const paidSocialSaving = 0.09;
+    const organicSaving = 0.05;
+    const affiliatesSaving = 0.08;
+    const managementConsultingSaving = 0.025;
+    const marketingAgencySaving = 0.012;
+    const costOfUsMarketingEmployee = 142700;
+    const hoursSaved = 0.28;
     const resultElement: HTMLElement | null = document.querySelector('.final-value-text');
 
     // checkboxes
