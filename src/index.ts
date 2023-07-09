@@ -1,3 +1,8 @@
+import { setupMultistepForm } from './utils/multistep';
+
+// Call the exported function
+setupMultistepForm();
+
 window.Webflow ||= [];
 window.Webflow.push(() => {
   // save all the inputs as variables
@@ -132,16 +137,16 @@ window.Webflow.push(() => {
 
   // checkboxes
   const surveyToolsCheckbox: HTMLInputElement | null = document.querySelector(
-    'input[name="Survey-tools"]'
+    'input[name="Survey-Tools"]'
   );
   const socialMonitoringCheckbox: HTMLInputElement | null = document.querySelector(
-    'input[name="Social-monitoring-tools"]'
+    'input[name="Social-Monitoring-Tools"]'
   );
   const crossChannelAttributionCheckbox: HTMLInputElement | null = document.querySelector(
-    'input[name="Cross-channel-attribution-tools"]'
+    'input[name="Cross-Channel-Attribution-Tools"]'
   );
   const competitiveIntelligenceCheckbox: HTMLInputElement | null = document.querySelector(
-    'input[name="Competitive-intelligence-tools"]'
+    'input[name="Competitive-Intelligence-Tools"]'
   );
   const marketingAgenciesCheckbox: HTMLInputElement | null = document.querySelector(
     'input[name="Marketing-Agencies"]'

@@ -1,1 +1,217 @@
-"use strict";(()=>{window.Webflow||(window.Webflow=[]);window.Webflow.push(()=>{let T=document.querySelector("input#Total-Marketing-Budget"),I=document.querySelector("input#Marketing-Team-Size"),n=document.querySelector("input#paid-search"),t=document.querySelector("input#paid-social"),l=document.querySelector("input#affiliates"),a=document.querySelector("input#organic"),s=document.querySelector("input#other"),L=null;[n,t,l,a].forEach(e=>{e!==null&&e.addEventListener("input",()=>{var g;let u=n!==null&&parseFloat(n.value)||0,c=t!==null&&parseFloat(t.value)||0,o=l!==null&&parseFloat(l.value)||0,i=a!==null&&parseFloat(a.value)||0;u=Math.min(Math.max(u,0),100),c=Math.min(Math.max(c,0),100),o=Math.min(Math.max(o,0),100),i=Math.min(Math.max(i,0),100);let M=u+c+o+i;if(M>100){L&&(L.value="0",L=null),u=n!==null&&parseFloat(n.value)||0,c=t!==null&&parseFloat(t.value)||0,o=l!==null&&parseFloat(l.value)||0,i=a!==null&&parseFloat(a.value)||0;let v=100-(u+c+o+i);s!==null&&(s.value=v.toString())}else{let v=100-M;s!==null&&(s.value=v.toString()),L=e}n!==null&&(n.value=u.toString()),t!==null&&(t.value=c.toString()),l!==null&&(l.value=o.toString()),a!==null&&(a.value=i.toString());let f=(g=e.parentElement)==null?void 0:g.parentElement,h=f==null?void 0:f.querySelector(".is--calc-label");parseFloat(e.value)>0?h.style.color="#DC56F2":h.style.color="#FFFFFF"})}),window.addEventListener("load",()=>{n!==null&&(n.value="0"),t!==null&&(t.value="0"),l!==null&&(l.value="0"),a!==null&&(a.value="0"),s!==null&&(s.value="0"),document.querySelectorAll(".is--calc-label").forEach(u=>{u.style.color="#FFFFFF"})});let y=.12,q=.09,V=.05,w=.08,k=.025,P=.012,z=142700,B=.28,H=document.querySelector(".final-value-text"),r=document.querySelector('input[name="Survey-tools"]'),m=document.querySelector('input[name="Social-monitoring-tools"]'),p=document.querySelector('input[name="Cross-channel-attribution-tools"]'),d=document.querySelector('input[name="Competitive-intelligence-tools"]'),E=document.querySelector('input[name="Marketing-Agencies"]'),S=document.querySelector('input[name="Management-Consulting"]');r==null||r.addEventListener("change",function(){this&&this.checked}),m==null||m.addEventListener("change",function(){this.checked}),p==null||p.addEventListener("change",function(){this.checked}),d==null||d.addEventListener("change",function(){this.checked}),E==null||E.addEventListener("change",function(){this.checked}),S==null||S.addEventListener("change",function(){this.checked});let O=document.querySelectorAll("input");function F(){let e=T!==null?parseFloat(T.value):0,u=I!==null?parseFloat(I.value):0,c=n!==null?parseFloat(n.value):0,o=t!==null?parseFloat(t.value):0,i=l!==null?parseFloat(l.value):0,M=a!==null?parseFloat(a.value):0,f=c/100,h=o/100,g=i/100,v=M/100,b=r!=null&&r.checked?1:0,D=m!=null&&m.checked?1:0,N=p!=null&&p.checked?1:0,U=d!=null&&d.checked?1:0,W=E!=null&&E.checked?1:0,j=S!=null&&S.checked?1:0;if(H){let A=e*f*y+e*h*q+e*g*w+e*v*V+U*3e4+b*3e4+D*3e4+N*3e4+j*k*e+W*P*e+u*B*z;H.textContent=A.toLocaleString()}}window.addEventListener("load",F),O.forEach(function(e){e.addEventListener("input",F)})});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/utils/multistep.ts
+  function setupMultistepForm() {
+    const steps = Array.from(document.querySelectorAll('[mt-data-form="step"]'));
+    const nextButtons = Array.from(document.querySelectorAll('[mt-data-form="next-btn"]'));
+    const backButtons = Array.from(document.querySelectorAll('[mt-data-form="back-btn"]'));
+    const editStep = document.querySelector('[mt-data-edit-step="1"]');
+    let currentStepIndex = 0;
+    function showStep(index) {
+      steps.forEach((step, i) => {
+        if (i === index) {
+          step.style.display = "block";
+        } else {
+          step.style.display = "none";
+        }
+      });
+    }
+    function handleNextButtonClick() {
+      if (currentStepIndex < steps.length - 1) {
+        currentStepIndex++;
+        showStep(currentStepIndex);
+      }
+    }
+    function handleBackButtonClick() {
+      if (currentStepIndex > 0) {
+        currentStepIndex--;
+        showStep(currentStepIndex);
+      }
+    }
+    function handleEditStepClick() {
+      currentStepIndex = 0;
+      showStep(currentStepIndex);
+    }
+    nextButtons.forEach((button) => {
+      button.addEventListener("click", handleNextButtonClick);
+    });
+    backButtons.forEach((button) => {
+      button.addEventListener("click", handleBackButtonClick);
+    });
+    showStep(currentStepIndex);
+    if (editStep) {
+      editStep.addEventListener("click", handleEditStepClick);
+    }
+  }
+
+  // src/index.ts
+  setupMultistepForm();
+  window.Webflow ||= [];
+  window.Webflow.push(() => {
+    const marketingBudget = document.querySelector(
+      "input#Total-Marketing-Budget"
+    );
+    const marketingTeamSize = document.querySelector(
+      "input#Marketing-Team-Size"
+    );
+    const paidSearchInput = document.querySelector("input#paid-search");
+    const paidSocialInput = document.querySelector("input#paid-social");
+    const affiliatesInput = document.querySelector("input#affiliates");
+    const organicInput = document.querySelector("input#organic");
+    const otherInput = document.querySelector("input#other");
+    let lastCheckedInput = null;
+    [paidSearchInput, paidSocialInput, affiliatesInput, organicInput].forEach((input) => {
+      if (input !== null) {
+        input.addEventListener("input", () => {
+          let paidSearch = paidSearchInput !== null ? parseFloat(paidSearchInput.value) || 0 : 0;
+          let paidSocial = paidSocialInput !== null ? parseFloat(paidSocialInput.value) || 0 : 0;
+          let affiliates = affiliatesInput !== null ? parseFloat(affiliatesInput.value) || 0 : 0;
+          let organic = organicInput !== null ? parseFloat(organicInput.value) || 0 : 0;
+          paidSearch = Math.min(Math.max(paidSearch, 0), 100);
+          paidSocial = Math.min(Math.max(paidSocial, 0), 100);
+          affiliates = Math.min(Math.max(affiliates, 0), 100);
+          organic = Math.min(Math.max(organic, 0), 100);
+          const totalValue = paidSearch + paidSocial + affiliates + organic;
+          if (totalValue > 100) {
+            if (lastCheckedInput) {
+              lastCheckedInput.value = "0";
+              lastCheckedInput = null;
+            }
+            paidSearch = paidSearchInput !== null ? parseFloat(paidSearchInput.value) || 0 : 0;
+            paidSocial = paidSocialInput !== null ? parseFloat(paidSocialInput.value) || 0 : 0;
+            affiliates = affiliatesInput !== null ? parseFloat(affiliatesInput.value) || 0 : 0;
+            organic = organicInput !== null ? parseFloat(organicInput.value) || 0 : 0;
+            const remainingValue = 100 - (paidSearch + paidSocial + affiliates + organic);
+            if (otherInput !== null) {
+              otherInput.value = remainingValue.toString();
+            }
+          } else {
+            const remainingValue = 100 - totalValue;
+            if (otherInput !== null) {
+              otherInput.value = remainingValue.toString();
+            }
+            lastCheckedInput = input;
+          }
+          if (paidSearchInput !== null) {
+            paidSearchInput.value = paidSearch.toString();
+          }
+          if (paidSocialInput !== null) {
+            paidSocialInput.value = paidSocial.toString();
+          }
+          if (affiliatesInput !== null) {
+            affiliatesInput.value = affiliates.toString();
+          }
+          if (organicInput !== null) {
+            organicInput.value = organic.toString();
+          }
+          const parentWrap = input.parentElement?.parentElement;
+          const label = parentWrap?.querySelector(".is--calc-label");
+          if (parseFloat(input.value) > 0) {
+            label.style.color = "#DC56F2";
+          } else {
+            label.style.color = "#FFFFFF";
+          }
+        });
+      }
+    });
+    window.addEventListener("load", () => {
+      if (paidSearchInput !== null) {
+        paidSearchInput.value = "0";
+      }
+      if (paidSocialInput !== null) {
+        paidSocialInput.value = "0";
+      }
+      if (affiliatesInput !== null) {
+        affiliatesInput.value = "0";
+      }
+      if (organicInput !== null) {
+        organicInput.value = "0";
+      }
+      if (otherInput !== null) {
+        otherInput.value = "0";
+      }
+      const labels = document.querySelectorAll(".is--calc-label");
+      labels.forEach((label) => {
+        label.style.color = "#FFFFFF";
+      });
+    });
+    const paidSearchSaving = 0.12;
+    const paidSocialSaving = 0.09;
+    const organicSaving = 0.05;
+    const affiliatesSaving = 0.08;
+    const managementConsultingSaving = 0.025;
+    const marketingAgencySaving = 0.012;
+    const costOfUsMarketingEmployee = 142700;
+    const hoursSaved = 0.28;
+    const resultElement = document.querySelector(".final-value-text");
+    const surveyToolsCheckbox = document.querySelector(
+      'input[name="Survey-Tools"]'
+    );
+    const socialMonitoringCheckbox = document.querySelector(
+      'input[name="Social-Monitoring-Tools"]'
+    );
+    const crossChannelAttributionCheckbox = document.querySelector(
+      'input[name="Cross-Channel-Attribution-Tools"]'
+    );
+    const competitiveIntelligenceCheckbox = document.querySelector(
+      'input[name="Competitive-Intelligence-Tools"]'
+    );
+    const marketingAgenciesCheckbox = document.querySelector(
+      'input[name="Marketing-Agencies"]'
+    );
+    const managementConsultingCheckbox = document.querySelector(
+      'input[name="Management-Consulting"]'
+    );
+    surveyToolsCheckbox?.addEventListener("change", function() {
+      if (this) {
+        this.checked ? "1" : "0";
+      }
+    });
+    socialMonitoringCheckbox?.addEventListener("change", function() {
+      this.checked ? "1" : "0";
+    });
+    crossChannelAttributionCheckbox?.addEventListener("change", function() {
+      this.checked ? "1" : "0";
+    });
+    competitiveIntelligenceCheckbox?.addEventListener("change", function() {
+      this.checked ? "1" : "0";
+    });
+    marketingAgenciesCheckbox?.addEventListener("change", function() {
+      this.checked ? "1" : "0";
+    });
+    managementConsultingCheckbox?.addEventListener("change", function() {
+      this.checked ? "1" : "0";
+    });
+    const inputs = document.querySelectorAll("input");
+    function calculateValues() {
+      const marketingBudgetValue = marketingBudget !== null ? parseFloat(marketingBudget.value) : 0;
+      const marketingTeamSizeValue = marketingTeamSize !== null ? parseFloat(marketingTeamSize.value) : 0;
+      const paidSearch = paidSearchInput !== null ? parseFloat(paidSearchInput.value) : 0;
+      const paidSocial = paidSocialInput !== null ? parseFloat(paidSocialInput.value) : 0;
+      const affiliates = affiliatesInput !== null ? parseFloat(affiliatesInput.value) : 0;
+      const organic = organicInput !== null ? parseFloat(organicInput.value) : 0;
+      const paidSearchPercentage = paidSearch / 100;
+      const paidSocialPercentage = paidSocial / 100;
+      const affiliatesPercentage = affiliates / 100;
+      const organicPercentage = organic / 100;
+      const surveyToolsCheckboxValue = surveyToolsCheckbox?.checked ? 1 : 0;
+      const socialMonitoringCheckboxValue = socialMonitoringCheckbox?.checked ? 1 : 0;
+      const crossChannelAttributionCheckboxValue = crossChannelAttributionCheckbox?.checked ? 1 : 0;
+      const competitiveIntelligenceCheckboxValue = competitiveIntelligenceCheckbox?.checked ? 1 : 0;
+      const marketingAgenciesCheckboxValue = marketingAgenciesCheckbox?.checked ? 1 : 0;
+      const managementConsultingCheckboxValue = managementConsultingCheckbox?.checked ? 1 : 0;
+      if (resultElement) {
+        const result = marketingBudgetValue * paidSearchPercentage * paidSearchSaving + marketingBudgetValue * paidSocialPercentage * paidSocialSaving + marketingBudgetValue * affiliatesPercentage * affiliatesSaving + marketingBudgetValue * organicPercentage * organicSaving + competitiveIntelligenceCheckboxValue * 3e4 + surveyToolsCheckboxValue * 3e4 + socialMonitoringCheckboxValue * 3e4 + crossChannelAttributionCheckboxValue * 3e4 + managementConsultingCheckboxValue * managementConsultingSaving * marketingBudgetValue + marketingAgenciesCheckboxValue * marketingAgencySaving * marketingBudgetValue + marketingTeamSizeValue * hoursSaved * costOfUsMarketingEmployee;
+        resultElement.textContent = result.toLocaleString();
+      }
+    }
+    window.addEventListener("load", calculateValues);
+    inputs.forEach(function(input) {
+      input.addEventListener("input", calculateValues);
+    });
+  });
+})();
+//# sourceMappingURL=index.js.map
